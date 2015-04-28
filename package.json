@@ -1,0 +1,31 @@
+{
+  "name": "unsplash-wallpaper",
+  "version": "1.0.0",
+  "description": "Set an image from Unsplash as your wallpaper.",
+  "main": "index.js",
+  "dependencies": {
+    "got": "^1.2.2",
+    "minimist": "^1.1.1",
+    "request-progress": "^0.3.1",
+    "wallpaper": "^1.0.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cuth/unsplash-wallpaper.git"
+  },
+  "keywords": [
+    "wallpaper",
+    "unsplash",
+    "desktop background",
+    "background image"
+  ],
+  "author": "cuth",
+  "license": "MIT",
+  "preferGlobal": true,
+  "bin": {
+    "unsplash-wallpaper": "index.js"
+  }
+}
