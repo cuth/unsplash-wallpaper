@@ -5,6 +5,45 @@
 var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 
+// --help
+if (argv.hasOwnProperty('help')) {
+    console.log([
+        '    --config {Width}x{Height}',
+        '',
+        '        Save the image dimensions for your wallpaper.',
+        '        example:',
+        '        $ unsplash-wallpaper --config 1600x1200',
+        '',
+        '    keywords {random|blur}',
+        '',
+        '        Get a random image or make the image blurry.',
+        '        (Note: these should be the first parameters)',
+        '        example:',
+        '        $ unsplash-wallpaper random',
+        '',
+        '    --image {Number}',
+        '',
+        '        Get a specific unsplash image if you know the number.',
+        '        (https://unsplash.it/images)',
+        '        example:',
+        '        $ unsplash-wallpaper --image 580',
+        '        $ unsplash-wallpaper blur --image 566',
+        '',
+        '    --gravity {north|east|south|west|center}',
+        '',
+        '        Choose the direction to crop.',
+        '        example:',
+        '        $ unsplash-wallpaper --image 327 --gravity south',
+        '',
+        '    -g',
+        '',
+        '        Apply a grayscale filter.',
+        '        example:',
+        '        $ unsplash-wallpaper random -g'
+    ].join('\n'));
+    return;
+}
+
 // --config {width}x{height}
 if (argv.hasOwnProperty('config')) {
     saveConfig(argv.config);
@@ -105,5 +144,12 @@ function saveConfig(dim) {
 }
 
 function configError() {
-    console.log('Please create a config file.\n\n--config {width}x{height}\n\nex.\n--config 1600x1200');
+    console.log([
+        'Please create a config file.',
+        '',
+        '--config {width}x{height}',
+        '',
+        'example:',
+        '$ unsplash-wallpaper --config 1600x1200'
+    ].join('\n'));
 }
