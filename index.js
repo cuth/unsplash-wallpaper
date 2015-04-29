@@ -133,6 +133,11 @@ function downloadImage(config) {
 }
 
 function saveConfig(dim) {
+    if (typeof dim !== 'string') {
+        configError();
+        return;
+    }
+    
     dim = dim.split('x');
 
     var config = {
