@@ -1,4 +1,3 @@
 node_modules
 .settings
-dimensions.json
-wallpaper.jpg
+.DS_Store

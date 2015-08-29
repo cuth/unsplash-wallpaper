@@ -3,6 +3,7 @@
 'use strict';
 
 var fs = require('fs');
+var path = require('path');
 var argv = require('minimist')(process.argv.slice(2));
 
 // --help
@@ -51,7 +52,7 @@ if (argv.hasOwnProperty('config')) {
 }
 
 // read config
-fs.readFile(__dirname + '/config.json', "utf-8", function (err, data) {
+fs.readFile(path.join(__dirname, 'config.json'), "utf-8", function (err, data) {
     if (err) {
         configError();
         return;
@@ -76,6 +77,7 @@ function downloadImage(config) {
 
     var url = 'https://unsplash.it/';
     var hasQuestionMark = false;
+    var uniqueName = path.join(__dirname, 'wallpaper-' + Math.random().toString(36).slice(2, 10) + '.jpg');
 
     // grayscale
     // -g
@@ -114,20 +116,28 @@ function downloadImage(config) {
         console.log(state.percent + '%');
     })
     .on('error', function (err) {
-        console.log('An error as occured while downloading.', err);
+        console.log('An error has occured while downloading.', err);
     })
-    .pipe(fs.createWriteStream(__dirname + '/wallpaper.jpg'))
+    .pipe(fs.createWriteStream(uniqueName))
     .on('error', function (err) {
-        console.log('An error as occured while streaming.', err);
+        console.log('An error has occured while streaming.', err);
     })
     .on('close', function () {
 
-        wallpaper.set(__dirname + '/wallpaper.jpg', function (err) {
+        wallpaper.set(uniqueName, function (err) {
             if (err) {
-                console.log(err);
+                console.log('An error has occured while setting wallpaper.', err);
                 return;
             }
-            console.log('done');
+
+            fs.unlink(uniqueName, function (err) {
+                if (err) {
+                    console.log('An error has occured while removing the temporary file.', err);
+                    return;
+                }
+
+                console.log('Check it out!');
+            });
         });
     });
 }
@@ -137,7 +147,7 @@ function saveConfig(dim) {
         configError();
         return;
     }
-    
+
     dim = dim.split('x');
 
     var config = {
@@ -145,7 +155,7 @@ function saveConfig(dim) {
         height: parseInt(dim[1], 10)
     };
 
-    fs.writeFileSync(__dirname + '/config.json', new Buffer(JSON.stringify(config, null, 4)), 'utf-8');
+    fs.writeFileSync(path.join(__dirname, 'config.json'), new Buffer(JSON.stringify(config, null, 4)), 'utf-8');
 }
 
 function configError() {

@@ -1,13 +1,13 @@
 {
   "name": "unsplash-wallpaper",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Set an image from Unsplash as your wallpaper.",
   "main": "index.js",
   "dependencies": {
     "got": "^1.2.2",
     "minimist": "^1.1.1",
     "request-progress": "^0.3.1",
-    "wallpaper": "^1.0.0"
+    "wallpaper": "^1.1.0"
   },
   "repository": {
     "type": "git",

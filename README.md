@@ -1,7 +1,13 @@
 unsplash-wallpaper
 ==================
 
-Use an image from unsplash.com (through unsplash.it) as your background image from a simple command.
+> Use an image from unsplash.com (through unsplash.it) as your background image from a simple command.
+
+This downloads a temporary image from unsplash.it using the dimensions you set in the config.
+
+*Tested on Mac and Windows. (should work on Linux).*
+
+**Mac users:** If you install this globally, every action will require `sudo`. Follow these [instructions](https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md) to not require `sudo`.
 
 Install
 -------
@@ -15,7 +21,7 @@ Usage
 
 ```
 $ unsplash-wallpaper --help
-  
+
     --config {Width}x{Height}
 
         Save the image dimensions for your wallpaper.
