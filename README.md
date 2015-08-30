@@ -51,7 +51,8 @@ random
     "." uses the current working directory.
     "./" stores the current working directory even when it changes.
     example:
-    $ unsplash-wallpaper --destination "Users/Shared"
+    $ unsplash-wallpaper --destination "/Users/Shared"
+    $ unsplash-wallpaper --destination "C:\Users\Public"
     $ unsplash-wallpaper --destination .
 
 --image {Number}
