@@ -21,6 +21,7 @@ Usage
 
 ```
 $ unsplash-wallpaper --help
+
 latest
 
     Get the latest image.
@@ -79,7 +80,7 @@ random
 
     Blur the image.
     example:
-    $ unsplash-wallpaper random -b
+    $ unsplash-wallpaper random -gb
 
 -v, --version
 

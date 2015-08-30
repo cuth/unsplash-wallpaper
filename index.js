@@ -77,7 +77,7 @@ if (argv.hasOwnProperty('help')) {
         '',
         '        Blur the image.',
         '        example:',
-        '        $ unsplash-wallpaper random -b',
+        '        $ unsplash-wallpaper random -gb',
         '',
         '    -v, --version',
         '',
