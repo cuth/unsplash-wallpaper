@@ -5,22 +5,52 @@
 var fs = require('fs');
 var path = require('path');
 var argv = require('minimist')(process.argv.slice(2));
+var assign = require('object-assign');
+
+var defaults = {
+    width: 2880,
+    height: 1800,
+    dir: "."
+};
+
+var shouldSaveConfig = false;
+var shouldDownload = (argv._.indexOf('latest') > -1 || argv._.indexOf('random') > -1 || argv.hasOwnProperty('image'));
 
 // --help
 if (argv.hasOwnProperty('help')) {
     console.log([
-        '    --config {Width}x{Height}',
+        '    latest',
         '',
-        '        Save the image dimensions for your wallpaper.',
+        '        Get the latest image.',
         '        example:',
-        '        $ unsplash-wallpaper --config 1600x1200',
+        '        $ unsplash-wallpaper latest',
         '',
-        '    keywords {random|blur}',
+        '    random',
         '',
-        '        Get a random image or make the image blurry.',
-        '        (Note: these should be the first parameters)',
+        '        Get a random image.',
         '        example:',
         '        $ unsplash-wallpaper random',
+        '',
+        '    --width {Number}',
+        '',
+        '        Set the width of desired download. Value is saved.',
+        '        example:',
+        '        $ unsplash-wallpaper random --width 1600',
+        '',
+        '    --height {Number}',
+        '',
+        '        Set the height of desired download. Value is saved.',
+        '        example:',
+        '        $ unsplash-wallpaper random --width 1600 --height 1200',
+        '',
+        '    --dir {String} or "."',
+        '',
+        '        Download the image to a specific directory. Value is saved.',
+        '        "." uses the current working directory.',
+        '        "./" stores the current working directory even when it changes.',
+        '        example:',
+        '        $ unsplash-wallpaper --destination "Users/Shared"',
+        '        $ unsplash-wallpaper --destination .',
         '',
         '    --image {Number}',
         '',
@@ -28,9 +58,9 @@ if (argv.hasOwnProperty('help')) {
         '        (https://unsplash.it/images)',
         '        example:',
         '        $ unsplash-wallpaper --image 580',
-        '        $ unsplash-wallpaper blur --image 566',
+        '        $ unsplash-wallpaper --image 566',
         '',
-        '    --gravity {north|east|south|west|center}',
+        '    --gravity "north|east|south|west|center"',
         '',
         '        Choose the direction to crop.',
         '        example:',
@@ -40,36 +70,78 @@ if (argv.hasOwnProperty('help')) {
         '',
         '        Apply a grayscale filter.',
         '        example:',
-        '        $ unsplash-wallpaper random -g'
+        '        $ unsplash-wallpaper random -g',
+        '',
+        '    -b',
+        '',
+        '        Blur the image.',
+        '        example:',
+        '        $ unsplash-wallpaper random -b',
+        '',
+        '    -v, --version',
+        '',
+        '        Print the version.',
+        '        example:',
+        '        $ unsplash-wallpaper -v'
     ].join('\n'));
     return;
 }
 
-// --config {width}x{height}
-if (argv.hasOwnProperty('config')) {
-    saveConfig(argv.config);
-    return;
+// -v, --version
+if (argv.hasOwnProperty('version') || argv.v) {
+    console.log('version', require('./package.json').version);
 }
 
-// read config
-fs.readFile(path.join(__dirname, 'config.json'), "utf-8", function (err, data) {
-    if (err) {
-        configError();
-        return;
+var options = {};
+
+// --width
+if (typeof argv.width === 'number') {
+    options.width = argv.width;
+    shouldSaveConfig = true;
+}
+
+// --height
+if (typeof argv.height === 'number') {
+    options.height = argv.height;
+    shouldSaveConfig = true;
+}
+
+// --dir
+if (typeof argv.dir === 'string') {
+    if (argv.dir.length > 1 && argv.dir.indexOf('.') === 0) {
+        options.dir = path.join(process.cwd(), argv.dir);
+    } else {
+        options.dir = argv.dir;
     }
+    shouldSaveConfig = true;
+}
 
-    var config = JSON.parse(data);
+if (shouldSaveConfig || shouldDownload) {
 
-    if (typeof config.width !== 'number' || typeof config.height !== 'number') {
-        configError();
-        return;
-    }
+    fs.readFile(path.join(__dirname, 'config.json'), "utf-8", function (err, config) {
+        if (err) {
+            config = {};
+        } else {
+            try {
+                config = JSON.parse(config);
+            } catch (e) {
+                config = {};
+            }
+        }
 
-    downloadImage(config);
-});
+        var opts = assign({}, defaults, config, options);
 
+        if (shouldDownload) {
+            downloadImage(opts);
+        }
 
-function downloadImage(config) {
+        if (shouldSaveConfig) {
+            saveConfig(opts);
+        }
+    });
+}
+
+function downloadImage(opts) {
 
     var request = require('got');
     var progress = require('request-progress');
@@ -77,7 +149,8 @@ function downloadImage(config) {
 
     var url = 'https://unsplash.it/';
     var hasQuestionMark = false;
-    var uniqueName = path.join(__dirname, 'wallpaper-' + Math.random().toString(36).slice(2, 10) + '.jpg');
+    var dir = (opts.dir === '.') ? process.cwd() : opts.dir;
+    var uniqueName = path.join(dir, 'wallpaper-' + Math.random().toString(36).slice(2, 10) + '.jpg');
 
     // grayscale
     // -g
@@ -85,33 +158,46 @@ function downloadImage(config) {
         url += 'g/';
     }
 
-    url += config.width + '/' + config.height + '/';
+    url += opts.width + '/' + opts.height + '/';
 
     // image number
     // --image #
-    if (typeof argv.image === 'number') {
+    if (typeof argv.image === 'number' || typeof argv.image === 'string') {
         url += '?image=' + argv.image;
         hasQuestionMark = true;
     }
 
     // gravity
     // --gravity north, east, south, west, center
-    if (argv.gravity) {
+    if (typeof argv.gravity === 'string') {
         url += (hasQuestionMark) ? '&' : '?';
         url += 'gravity=' + argv.gravity;
         hasQuestionMark = true;
     }
 
-    // params
+    var params = [];
+
+    // random
+    if (argv._.indexOf('random') > -1) {
+        params.push('random');
+    }
+
+    // -b
+    if (argv.b) {
+        params.push('blur');
+    }
+
     // random blur
-    if (argv._.length > 0) {
+    if (params.length > 0) {
         url += (hasQuestionMark) ? '&' : '?';
-        url += argv._.join('&');
+        url += params.join('&');
     }
 
     console.log('request ', url);
 
-    progress(request(url))
+    progress(request(url), {
+        throttle: 200
+    })
     .on('progress', function (state) {
         console.log(state.percent + '%');
     })
@@ -124,47 +210,19 @@ function downloadImage(config) {
     })
     .on('close', function () {
 
+        console.log('Image saved to ', uniqueName);
+
         wallpaper.set(uniqueName, function (err) {
             if (err) {
                 console.log('An error has occured while setting wallpaper.', err);
                 return;
             }
 
-            fs.unlink(uniqueName, function (err) {
-                if (err) {
-                    console.log('An error has occured while removing the temporary file.', err);
-                    return;
-                }
-
-                console.log('Check it out!');
-            });
+            console.log('Check it out!');
         });
     });
 }
 
-function saveConfig(dim) {
-    if (typeof dim !== 'string') {
-        configError();
-        return;
-    }
-
-    dim = dim.split('x');
-
-    var config = {
-        width: parseInt(dim[0], 10),
-        height: parseInt(dim[1], 10)
-    };
-
-    fs.writeFileSync(path.join(__dirname, 'config.json'), new Buffer(JSON.stringify(config, null, 4)), 'utf-8');
-}
-
-function configError() {
-    console.log([
-        'Please create a config file.',
-        '',
-        '--config {width}x{height}',
-        '',
-        'example:',
-        '$ unsplash-wallpaper --config 1600x1200'
-    ].join('\n'));
+function saveConfig(opts) {
+    fs.writeFileSync(path.join(__dirname, 'config.json'), new Buffer(JSON.stringify(opts, null, 4)), 'utf-8');
 }
