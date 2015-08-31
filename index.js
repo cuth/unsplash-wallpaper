@@ -1,7 +1,5 @@
 #! /usr/bin/env node
 
-'use strict';
-
 var fs = require('fs');
 var path = require('path');
 var argv = require('minimist')(process.argv.slice(2));
@@ -144,7 +142,7 @@ if (shouldSaveConfig || shouldDownload) {
 
 function downloadImage(opts) {
 
-    var request = require('got');
+    var request = require('request');
     var progress = require('request-progress');
     var wallpaper = require('wallpaper');
 
@@ -197,10 +195,10 @@ function downloadImage(opts) {
     console.log('request ', url);
 
     progress(request(url), {
-        throttle: 200
+        throttle: 30
     })
     .on('progress', function (state) {
-        console.log(state.percent + '%');
+        process.stdout.write('Downloading [' + progressBar(state.percent, 40) + ']\033[0G');
     })
     .on('error', function (err) {
         console.log('An error has occured while downloading.', err);
@@ -226,4 +224,14 @@ function downloadImage(opts) {
 
 function saveConfig(opts) {
     fs.writeFileSync(path.join(__dirname, 'config.json'), new Buffer(JSON.stringify(opts, null, 4)), 'utf-8');
+}
+
+function progressBar(percent, length) {
+    var barCount = (percent / 100) * length;
+    var bar = "";
+    var x = 0;
+    for (var x = 0; x < length; x += 1) {
+        bar += (x <= barCount) ? "=" : " ";
+    }
+    return bar;
 }
