@@ -13,6 +13,7 @@ var defaults = {
 
 var shouldSaveConfig = false;
 var shouldDownload = (argv._.indexOf('latest') > -1 || argv._.indexOf('random') > -1 || argv.hasOwnProperty('image'));
+var printedVersion = false;
 
 // --help
 if (argv.hasOwnProperty('help')) {
@@ -89,6 +90,7 @@ if (argv.hasOwnProperty('help')) {
 // -v, --version
 if (argv.hasOwnProperty('version') || argv.v) {
     console.log('version', require('./package.json').version);
+    printedVersion = true;
 }
 
 var options = {};
@@ -138,6 +140,8 @@ if (shouldSaveConfig || shouldDownload) {
             saveConfig(opts);
         }
     });
+} else if (!printedVersion) {
+    console.log('For help:\n$ unsplash-wallpaper --help');
 }
 
 function downloadImage(opts) {
@@ -205,10 +209,11 @@ function downloadImage(opts) {
     })
     .pipe(fs.createWriteStream(uniqueName))
     .on('error', function (err) {
-        console.log('An error has occured while streaming.', err);
+        console.log('\nAn error has occured while streaming.', err);
     })
     .on('close', function () {
 
+        console.log('Downloading [' + progressBar(100, 40) + ']');
         console.log('Image saved to ', uniqueName);
 
         wallpaper.set(uniqueName, function (err) {
