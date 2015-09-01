@@ -2,22 +2,35 @@
 
 var fs = require('fs');
 var path = require('path');
-var argv = require('minimist')(process.argv.slice(2));
+var argv = require('minimist')(process.argv.slice(2), {
+    boolean: ['help', 'save-config', 'grayscale', 'blur', 'version'],
+    alias: {
+        w: 'width',
+        h: 'height',
+        d: 'dir',
+        s: 'save-config',
+        i: 'image',
+        x: 'gravity',
+        g: 'grayscale',
+        b: 'blur',
+        v: 'version'
+    }
+});
 var assign = require('object-assign');
 
 var defaults = {
     width: 2880,
     height: 1800,
-    dir: "."
+    dir: '.'
 };
 
-var shouldSaveConfig = false;
 var shouldDownload = (argv._.indexOf('latest') > -1 || argv._.indexOf('random') > -1 || argv.hasOwnProperty('image'));
 var printedVersion = false;
 
 // --help
-if (argv.hasOwnProperty('help')) {
+if (argv.help) {
     console.log([
+        '',
         '    latest',
         '',
         '        Get the latest image.',
@@ -30,65 +43,55 @@ if (argv.hasOwnProperty('help')) {
         '        example:',
         '        $ unsplash-wallpaper random',
         '',
-        '    --width {Number}',
+        '    -w, --width {Number}',
         '',
-        '        Set the width of desired download. Value is saved.',
-        '        example:',
-        '        $ unsplash-wallpaper random --width 1600',
+        '        Set the width of desired download.',
         '',
-        '    --height {Number}',
+        '    -h, --height {Number}',
         '',
-        '        Set the height of desired download. Value is saved.',
-        '        example:',
-        '        $ unsplash-wallpaper random --width 1600 --height 1200',
+        '        Set the height of desired download.',
         '',
-        '    --dir {String} or "."',
+        '    -d, --dir {String} or "."',
         '',
-        '        Download the image to a specific directory. Value is saved.',
+        '        Download the image to a specific directory.',
         '        "." uses the current working directory.',
         '        "./" stores the current working directory even when it changes.',
         '        example:',
-        '        $ unsplash-wallpaper --destination "/Users/Shared"',
-        '        $ unsplash-wallpaper --destination "C:\Users\Public"',
-        '        $ unsplash-wallpaper --destination .',
+        '        $ unsplash-wallpaper --dir "/Users/Shared"',
+        '        $ unsplash-wallpaper --dir "C:\Users\Public"',
+        '        $ unsplash-wallpaper -d .',
         '',
-        '    --image {Number}',
+        '    -s, --save-config',
+        '',
+        '        Saves any width, height or dir value in a config file.',
+        '        example:',
+        '        $ unsplash-wallpaper random -s --width 1600 --height 1200',
+        '',
+        '    -i, --image {Number}',
         '',
         '        Get a specific unsplash image if you know the number.',
         '        (https://unsplash.it/images)',
         '        example:',
-        '        $ unsplash-wallpaper --image 580',
-        '        $ unsplash-wallpaper --image 566',
+        '        $ unsplash-wallpaper -i 580',
         '',
-        '    --gravity "north|east|south|west|center"',
+        '    -x, --gravity "north|east|south|west|center"',
         '',
         '        Choose the direction to crop.',
         '        example:',
         '        $ unsplash-wallpaper --image 327 --gravity south',
         '',
-        '    -g',
+        '    -g, --grayscale',
         '',
-        '        Apply a grayscale filter.',
-        '        example:',
-        '        $ unsplash-wallpaper random -g',
-        '',
-        '    -b',
-        '',
-        '        Blur the image.',
-        '        example:',
-        '        $ unsplash-wallpaper random -gb',
+        '    -b, --blur',
         '',
         '    -v, --version',
         '',
-        '        Print the version.',
-        '        example:',
-        '        $ unsplash-wallpaper -v'
     ].join('\n'));
     return;
 }
 
-// -v, --version
-if (argv.hasOwnProperty('version') || argv.v) {
+// --version
+if (argv.version) {
     console.log('version', require('./package.json').version);
     printedVersion = true;
 }
@@ -98,13 +101,11 @@ var options = {};
 // --width
 if (typeof argv.width === 'number') {
     options.width = argv.width;
-    shouldSaveConfig = true;
 }
 
 // --height
 if (typeof argv.height === 'number') {
     options.height = argv.height;
-    shouldSaveConfig = true;
 }
 
 // --dir
@@ -114,12 +115,11 @@ if (typeof argv.dir === 'string') {
     } else {
         options.dir = argv.dir;
     }
-    shouldSaveConfig = true;
 }
 
-if (shouldSaveConfig || shouldDownload) {
+if (argv['save-config'] || shouldDownload) {
 
-    fs.readFile(path.join(__dirname, 'config.json'), "utf-8", function (err, config) {
+    fs.readFile(path.join(__dirname, 'config.json'), 'utf-8', function (err, config) {
         if (err) {
             config = {};
         } else {
@@ -136,7 +136,7 @@ if (shouldSaveConfig || shouldDownload) {
             downloadImage(opts);
         }
 
-        if (shouldSaveConfig) {
+        if (argv['save-config']) {
             saveConfig(opts);
         }
     });
@@ -155,22 +155,19 @@ function downloadImage(opts) {
     var dir = (opts.dir === '.') ? process.cwd() : opts.dir;
     var uniqueName = path.join(dir, 'wallpaper-' + Math.random().toString(36).slice(2, 10) + '.jpg');
 
-    // grayscale
-    // -g
-    if (argv.g) {
+    // --grayscale
+    if (argv.grayscale) {
         url += 'g/';
     }
 
     url += opts.width + '/' + opts.height + '/';
 
-    // image number
     // --image #
     if (typeof argv.image === 'number' || typeof argv.image === 'string') {
         url += '?image=' + argv.image;
         hasQuestionMark = true;
     }
 
-    // gravity
     // --gravity north, east, south, west, center
     if (typeof argv.gravity === 'string') {
         url += (hasQuestionMark) ? '&' : '?';
@@ -185,8 +182,8 @@ function downloadImage(opts) {
         params.push('random');
     }
 
-    // -b
-    if (argv.b) {
+    // --blur
+    if (argv.blur) {
         params.push('blur');
     }
 
@@ -233,10 +230,9 @@ function saveConfig(opts) {
 
 function progressBar(percent, length) {
     var barCount = (percent / 100) * length;
-    var bar = "";
-    var x = 0;
+    var bar = '';
     for (var x = 0; x < length; x += 1) {
-        bar += (x <= barCount) ? "=" : " ";
+        bar += (x <= barCount) ? '=' : ' ';
     }
     return bar;
 }

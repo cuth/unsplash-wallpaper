@@ -3,11 +3,9 @@ unsplash-wallpaper
 
 > Use an image from unsplash.com (through unsplash.it) as your background image from a simple command.
 
-This downloads a temporary image from unsplash.it using the dimensions you set in the config.
+This downloads an image from unsplash.it to the current working directory unless specified.
 
 *Tested on Mac and Windows. (should work on Linux).*
-
-**Mac users:** If you install this globally, every action that changes the config.json file will require `sudo`. Follow these [instructions](https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md) to not require `sudo`.
 
 Install
 -------
@@ -16,79 +14,70 @@ Install
 $ npm install --global unsplash-wallpaper
 ```
 
+
 Usage
 -----
 
 ```
 $ unsplash-wallpaper --help
 
-latest
+    latest
 
-    Get the latest image.
-    example:
-    $ unsplash-wallpaper latest
+        Get the latest image.
+        example:
+        $ unsplash-wallpaper latest
 
-random
+    random
 
-    Get a random image.
-    example:
-    $ unsplash-wallpaper random
+        Get a random image.
+        example:
+        $ unsplash-wallpaper random
 
---width {Number}
+    -w, --width {Number}
 
-    Set the width of desired download. Value is saved.
-    example:
-    $ unsplash-wallpaper random --width 1600
+        Set the width of desired download.
 
---height {Number}
+    -h, --height {Number}
 
-    Set the height of desired download. Value is saved.
-    example:
-    $ unsplash-wallpaper random --width 1600 --height 1200
+        Set the height of desired download.
 
---dir {String} or "."
+    -d, --dir {String} or "."
 
-    Download the image to a specific directory. Value is saved.
-    "." uses the current working directory.
-    "./" stores the current working directory even when it changes.
-    example:
-    $ unsplash-wallpaper --destination "/Users/Shared"
-    $ unsplash-wallpaper --destination "C:\Users\Public"
-    $ unsplash-wallpaper --destination .
+        Download the image to a specific directory.
+        "." uses the current working directory.
+        "./" stores the current working directory even when it changes.
+        example:
+        $ unsplash-wallpaper --dir "/Users/Shared"
+        $ unsplash-wallpaper --dir "C:UsersPublic"
+        $ unsplash-wallpaper -d .
 
---image {Number}
+    -s, --save-config
 
-    Get a specific unsplash image if you know the number.
-    (https://unsplash.it/images)
-    example:
-    $ unsplash-wallpaper --image 580
-    $ unsplash-wallpaper --image 566
+        Saves any width, height or dir value in a config file.
+        example:
+        $ unsplash-wallpaper random -s --width 1600 --height 1200
 
---gravity "north|east|south|west|center"
+    -i, --image {Number}
 
-    Choose the direction to crop.
-    example:
-    $ unsplash-wallpaper --image 327 --gravity south
+        Get a specific unsplash image if you know the number.
+        (https://unsplash.it/images)
+        example:
+        $ unsplash-wallpaper -i 580
 
--g
+    -x, --gravity "north|east|south|west|center"
 
-    Apply a grayscale filter.
-    example:
-    $ unsplash-wallpaper random -g
+        Choose the direction to crop.
+        example:
+        $ unsplash-wallpaper --image 327 --gravity south
 
--b
+    -g, --grayscale
 
-    Blur the image.
-    example:
-    $ unsplash-wallpaper random -gb
+    -b, --blur
 
--v, --version
-
-    Print the version.
-    example:
-    $ unsplash-wallpaper -v
+    -v, --version
 
 ```
+
 
 Thanks
 ------
