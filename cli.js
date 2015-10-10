@@ -1,0 +1,60 @@
+#! /usr/bin/env node
+
+const lib = require('./lib');
+const wallpaper = require('wallpaper');
+const argv = require('minimist')(process.argv.slice(2), {
+    boolean: ['help', 'save-config', 'grayscale', 'blur', 'version'],
+    alias: {
+        w: 'width',
+        h: 'height',
+        d: 'dir',
+        s: 'save-config',
+        i: 'image',
+        x: 'gravity',
+        g: 'grayscale',
+        b: 'blur',
+        v: 'version'
+    }
+});
+
+// --help
+if (argv.help) {
+    console.log(require('./lib/help'));
+    return;
+}
+
+// --version
+if (argv.version) {
+    console.log('version', require('./package.json').version);
+    return;
+}
+
+const options = lib.sanitize(argv);
+const shouldSave = options['save-config'];
+const shouldDownload = (options.latest || options.random || !!options.image);
+
+if (shouldSave || shouldDownload) {
+
+    lib.readConfig(options).then(opts => {
+
+        if (shouldSave) {
+            lib.saveConfig(opts);
+        }
+
+        if (shouldDownload) {
+            const url = lib.createUrl(opts);
+
+            console.log('request ', url);
+
+            return lib.download(opts, url).then(filename => wallpaper.set(filename)).then(() => {
+                console.log('Check it out.');
+            });
+        }
+
+    }).catch(err => {
+        console.log(err);
+    });
+
+} else {
+    console.log(require('./lib/help'));
+}
