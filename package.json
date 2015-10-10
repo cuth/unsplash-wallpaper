@@ -26,5 +26,11 @@
   "preferGlobal": true,
   "bin": {
     "unsplash-wallpaper": "index.js"
+  },
+  "scripts": {
+    "test": "ava"
+  },
+  "devDependencies": {
+    "ava": "^0.2.0"
   }
 }
