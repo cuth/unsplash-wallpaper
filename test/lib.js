@@ -38,7 +38,7 @@ test('sanitizeArgs 2', t => {
     t.end();
 });
 
-test('writeConfig and readConfig', t => {
+test('writeConfig and readConfig', async t => {
 
     const settings = {
         width: 5678,
@@ -46,20 +46,15 @@ test('writeConfig and readConfig', t => {
         dir: '/test/dir'
     }
 
-    let revert;
+    const revert = await lib.readConfig({});
 
-    return lib.readConfig({})
-        .then(options => {
-            revert = options;
-            return lib.saveConfig(settings);
-        })
-        .then(() => {
-            return lib.readConfig({});
-        })
-        .then(options => {
-            t.same(settings, options);
-            return lib.saveConfig(revert);
-        });
+    await lib.saveConfig(settings);
+
+    const options = await lib.readConfig({});
+
+    t.same(settings, options);
+
+    await lib.saveConfig(revert);
 });
 
 test('createUrl 1', t => {
