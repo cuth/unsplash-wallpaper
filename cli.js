@@ -35,16 +35,14 @@ const shouldDownload = (options.latest || options.random || !!options.image);
 
 if (shouldSave || shouldDownload) {
 
-    lib.readConfig(options).then(opts => {
+    const promise = lib.readConfig(options);
 
-        if (shouldSave) {
-            return lib.saveConfig(opts);
-        }
+    if (shouldSave) {
+        promise.then(opts => lib.saveConfig(opts));
+    }
 
-    })
-    .then({
-
-        if (shouldDownload) {
+    if (shouldDownload) {
+        promise.then(opts => {
             const url = lib.createUrl(opts);
 
             console.log('request ', url);
@@ -52,9 +50,10 @@ if (shouldSave || shouldDownload) {
             return lib.download(opts, url).then(filename => wallpaper.set(filename)).then(() => {
                 console.log('Check it out.');
             });
-        }
+        });
+    }
 
-    }).catch(err => {
+    promise.catch(err => {
         console.log(err);
     });
 

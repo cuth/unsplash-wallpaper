@@ -1,6 +1,7 @@
 import test from 'ava';
 import * as lib from '../lib';
 import path from 'path';
+import * as DEFAULTS from '../lib/defaults';
 
 test('sanitizeArgs 1', t => {
 
@@ -61,6 +62,45 @@ test('writeConfig and readConfig', t => {
         });
 });
 
-test('createUrl', t => {
+test('createUrl 1', t => {
 
-})
+    const options = {
+        grayscale: true,
+        random: true,
+        latest: false,
+        gravity: 'east'
+    };
+
+    const value = lib.createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://unsplash.it/g/2880/1800/?gravity=east&random';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 2', t => {
+
+    const options = {
+        grayscale: false,
+        random: false,
+        latest: true,
+        blur: true
+    };
+
+    const value = lib.createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://unsplash.it/2880/1800/?blur';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 3', t => {
+
+    const options = {};
+
+    const value = lib.createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://unsplash.it/2880/1800/';
+
+    t.is(value, expected);
+    t.end();
+});
