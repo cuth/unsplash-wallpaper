@@ -1,5 +1,10 @@
 import test from 'ava';
-import * as lib from '../lib';
+import {
+    sanitizeArgs,
+    readConfig,
+    saveConfig,
+    createUrl
+} from '../lib';
 import path from 'path';
 import * as DEFAULTS from '../lib/defaults';
 
@@ -16,7 +21,7 @@ test('sanitizeArgs 1', t => {
         image: ''
     };
 
-    t.same(lib.sanitizeArgs(args), sanitized);
+    t.same(sanitizeArgs(args), sanitized);
     t.end();
 });
 
@@ -34,7 +39,7 @@ test('sanitizeArgs 2', t => {
         image: 500
     };
 
-    t.same(lib.sanitizeArgs(args), sanitized);
+    t.same(sanitizeArgs(args), sanitized);
     t.end();
 });
 
@@ -46,15 +51,15 @@ test('writeConfig and readConfig', async t => {
         dir: '/test/dir'
     }
 
-    const revert = await lib.readConfig({});
+    const revert = await readConfig({});
 
-    await lib.saveConfig(settings);
+    await saveConfig(settings);
 
-    const options = await lib.readConfig({});
+    const options = await readConfig({});
 
     t.same(settings, options);
 
-    await lib.saveConfig(revert);
+    await saveConfig(revert);
 });
 
 test('createUrl 1', t => {
@@ -66,7 +71,7 @@ test('createUrl 1', t => {
         gravity: 'east'
     };
 
-    const value = lib.createUrl(Object.assign({}, DEFAULTS, options));
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
     const expected = 'https://unsplash.it/g/2880/1800/?gravity=east&random';
 
     t.is(value, expected);
@@ -82,7 +87,7 @@ test('createUrl 2', t => {
         blur: true
     };
 
-    const value = lib.createUrl(Object.assign({}, DEFAULTS, options));
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
     const expected = 'https://unsplash.it/2880/1800/?blur';
 
     t.is(value, expected);
@@ -93,7 +98,7 @@ test('createUrl 3', t => {
 
     const options = {};
 
-    const value = lib.createUrl(Object.assign({}, DEFAULTS, options));
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
     const expected = 'https://unsplash.it/2880/1800/';
 
     t.is(value, expected);
