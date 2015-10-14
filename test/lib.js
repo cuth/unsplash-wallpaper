@@ -84,11 +84,12 @@ test('createUrl 2', t => {
         grayscale: false,
         random: false,
         latest: true,
+        image: 150,
         blur: true
     };
 
     const value = createUrl(Object.assign({}, DEFAULTS, options));
-    const expected = 'https://unsplash.it/2880/1800/?blur';
+    const expected = 'https://unsplash.it/2880/1800/?image=150&blur';
 
     t.is(value, expected);
     t.end();
