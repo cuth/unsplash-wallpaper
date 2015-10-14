@@ -4,6 +4,7 @@
   "description": "Set an image from Unsplash as your wallpaper.",
   "main": "index.js",
   "dependencies": {
+    "log-update": "^1.0.2",
     "minimist": "^1.1.1",
     "pify": "^2.2.0",
     "request": "^2.61.0",

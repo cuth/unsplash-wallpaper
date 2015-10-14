@@ -29,7 +29,7 @@ if (argv.version) {
     return;
 }
 
-const options = lib.sanitize(argv);
+const options = lib.sanitizeArgs(argv);
 const shouldSave = options['save-config'];
 const shouldDownload = (options.latest || options.random || !!options.image);
 
@@ -38,8 +38,11 @@ if (shouldSave || shouldDownload) {
     lib.readConfig(options).then(opts => {
 
         if (shouldSave) {
-            lib.saveConfig(opts);
+            return lib.saveConfig(opts);
         }
+
+    })
+    .then({
 
         if (shouldDownload) {
             const url = lib.createUrl(opts);
