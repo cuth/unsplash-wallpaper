@@ -3,9 +3,13 @@ import {
     sanitizeArgs,
     readConfig,
     saveConfig,
-    createUrl
+    createUrl,
+    download
 } from '../lib';
+import fs from 'fs';
 import path from 'path';
+import exists from 'path-exists';
+import pify from 'pify';
 import * as DEFAULTS from '../lib/defaults';
 
 test('sanitizeArgs 1', t => {
@@ -56,7 +60,7 @@ test('writeConfig and readConfig', async t => {
 
     t.same(settings, options);
 
-    await saveConfig(revert);
+    return saveConfig(revert);
 });
 
 test('createUrl 1', t => {
@@ -98,4 +102,19 @@ test('createUrl 3', t => {
 
     t.is(value, expected);
     t.end();
+});
+
+test('download', async t => {
+    const options = {
+        dir: __dirname
+    };
+    const url = 'https://unsplash.it/2880/1800/';
+    const stateStack = [];
+
+    const file = await download(options, url, state => stateStack.push(state));
+    const doesExist = await exists(file);
+
+    t.ok(doesExist);
+
+    return pify(fs.unlink)(file);
 });

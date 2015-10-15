@@ -29,10 +29,12 @@
     "unsplash-wallpaper": "cli.js"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "lint": "xo *.js lib/*.js test/*.js"
   },
   "devDependencies": {
-    "ava": "^0.2.0"
+    "ava": "^0.2.0",
+    "path-exists": "^2.0.0"
   },
   "xo": {
     "esnext": true,

@@ -4,6 +4,7 @@ const lib = require('./lib');
 const wallpaper = require('wallpaper');
 const help = require('./lib/help');
 const version = require('./package.json').version;
+const reporter = require('./lib/progress-reporter');
 const argv = require('minimist')(process.argv.slice(2), {
     boolean: ['help', 'save-config', 'grayscale', 'blur', 'version'],
     alias: {
@@ -46,9 +47,14 @@ if (shouldSave || shouldDownload) {
 
             console.log('request ', url);
 
-            return lib.download(opts, url).then(filename => wallpaper.set(filename)).then(() => {
-                console.log('Check it out.');
-            });
+            return lib.download(opts, url, reporter)
+                .then(filename => {
+                    console.log('Image saved to ', filename);
+                    return wallpaper.set(filename);
+                })
+                .then(() => {
+                    console.log('Check it out.');
+                });
         });
     }
 
