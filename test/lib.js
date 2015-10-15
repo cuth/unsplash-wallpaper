@@ -9,7 +9,6 @@ import path from 'path';
 import * as DEFAULTS from '../lib/defaults';
 
 test('sanitizeArgs 1', t => {
-
     const args = {
         _: ['random'],
         dir: '.'
@@ -26,7 +25,6 @@ test('sanitizeArgs 1', t => {
 });
 
 test('sanitizeArgs 2', t => {
-
     const args = {
         _: ['latest'],
         dir: './folder',
@@ -44,12 +42,11 @@ test('sanitizeArgs 2', t => {
 });
 
 test('writeConfig and readConfig', async t => {
-
     const settings = {
         width: 5678,
         height: 1234,
         dir: '/test/dir'
-    }
+    };
 
     const revert = await readConfig({});
 
@@ -63,7 +60,6 @@ test('writeConfig and readConfig', async t => {
 });
 
 test('createUrl 1', t => {
-
     const options = {
         grayscale: true,
         random: true,
@@ -79,7 +75,6 @@ test('createUrl 1', t => {
 });
 
 test('createUrl 2', t => {
-
     const options = {
         grayscale: false,
         random: false,
@@ -96,7 +91,6 @@ test('createUrl 2', t => {
 });
 
 test('createUrl 3', t => {
-
     const options = {};
 
     const value = createUrl(Object.assign({}, DEFAULTS, options));

@@ -33,5 +33,9 @@
   },
   "devDependencies": {
     "ava": "^0.2.0"
+  },
+  "xo": {
+    "esnext": true,
+    "space": 4
   }
 }
