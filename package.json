@@ -1,14 +1,15 @@
 {
   "name": "unsplash-wallpaper",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Set an image from Unsplash as your wallpaper.",
   "main": "index.js",
   "dependencies": {
+    "log-update": "^1.0.2",
     "minimist": "^1.1.1",
-    "object-assign": "^4.0.1",
+    "pify": "^2.2.0",
     "request": "^2.61.0",
     "request-progress": "^0.3.1",
-    "wallpaper": "^1.1.0"
+    "wallpaper": "^2.0.0"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,18 @@
   "license": "MIT",
   "preferGlobal": true,
   "bin": {
-    "unsplash-wallpaper": "index.js"
+    "unsplash-wallpaper": "cli.js"
+  },
+  "scripts": {
+    "test": "ava",
+    "lint": "xo *.js lib/*.js test/*.js"
+  },
+  "devDependencies": {
+    "ava": "^0.2.0",
+    "path-exists": "^2.0.0"
+  },
+  "xo": {
+    "esnext": true,
+    "space": 4
   }
 }
