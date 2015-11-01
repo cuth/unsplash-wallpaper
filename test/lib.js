@@ -1,5 +1,6 @@
 import test from 'ava';
 import {
+    resolveDir,
     sanitizeArgs,
     readConfig,
     saveConfig,
@@ -7,20 +8,44 @@ import {
     download
 } from '../lib';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import exists from 'path-exists';
 import pify from 'pify';
 import * as DEFAULTS from '../lib/defaults';
 
+test('resolveDir 1', t => {
+    const dir = './path/to/directory';
+    const resolved = path.join(process.cwd(), dir);
+
+    t.same(resolveDir(dir), resolved);
+    t.end();
+});
+
+test('resolveDir 2', t => {
+    const dir = '.';
+
+    t.same(resolveDir(dir), dir);
+    t.end();
+});
+
+test('resolveDir 3', t => {
+    const dir = '~/path/to/directory';
+    const resolved = path.join(os.homedir(), '/path/to/directory');
+
+    t.same(resolveDir(dir), resolved);
+    t.end();
+});
+
 test('sanitizeArgs 1', t => {
     const args = {
         _: ['random'],
-        dir: '.'
+        dir: './'
     };
     const sanitized = {
         random: true,
         latest: false,
-        dir: process.cwd(),
+        dir: path.join(process.cwd(), '/'),
         image: ''
     };
 
