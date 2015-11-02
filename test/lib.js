@@ -45,8 +45,7 @@ test('sanitizeArgs 1', t => {
     const sanitized = {
         random: true,
         latest: false,
-        dir: path.join(process.cwd(), '/'),
-        image: ''
+        dir: path.join(process.cwd(), '/')
     };
 
     t.same(sanitizeArgs(args), sanitized);
