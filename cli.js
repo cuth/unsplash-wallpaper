@@ -3,6 +3,8 @@
 const lib = require('./lib');
 const wallpaper = require('wallpaper');
 const help = require('./lib/help');
+const colors = require('./lib/colors');
+const figures = require('./lib/figures');
 const version = require('./package.json').version;
 const reporter = require('./lib/progress-reporter');
 const argv = require('minimist')(process.argv.slice(2), {
@@ -52,18 +54,22 @@ if (shouldSave || shouldDownload) {
 
     if (shouldSave) {
         promise.then(opts => lib.saveConfig(opts))
-            .catch(console.log);
+            .catch(error => {
+                if (error && error.message) {
+                    console.log(colors.magenta(`${figures.cross} ${error.message}`));
+                }
+            });
     }
 
     if (shouldDownload) {
         promise.then(opts => {
             const url = lib.createUrl(opts);
 
-            console.log('Request', url);
+            console.log(colors.yellow(`Request ${url}`));
 
             return lib.download(opts, url, reporter)
                 .then(filename => {
-                    console.log('Image saved to', filename);
+                    console.log(colors.green(`${figures.tick} Image saved to ${filename}`));
                     return wallpaper.set(filename);
                 })
                 .then(() => {
@@ -71,11 +77,11 @@ if (shouldSave || shouldDownload) {
                 })
                 .catch(error => {
                     if (error && error.message) {
-                        console.log(error.message);
+                        console.log(colors.red(`${figures.cross} ${error.message}`));
                     }
                 });
         });
     }
-} else {
+} else if (!argv.help && !argv.version) {
     console.log(help);
 }
