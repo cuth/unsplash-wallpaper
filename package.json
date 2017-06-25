@@ -1,6 +1,6 @@
 {
   "name": "unsplash-wallpaper",
-  "version": "4.1.2",
+  "version": "5.0.0",
   "description": "Set an image from Unsplash as your wallpaper.",
   "main": "index.js",
   "dependencies": {

@@ -44,7 +44,6 @@ test('sanitizeArgs 1', t => {
     };
     const sanitized = {
         random: true,
-        latest: false,
         dir: path.join(process.cwd(), '/')
     };
 
@@ -59,7 +58,6 @@ test('sanitizeArgs 2', t => {
         image: 500
     };
     const sanitized = {
-        random: false,
         latest: true,
         dir: path.join(process.cwd(), '/folder'),
         image: 500
@@ -89,14 +87,11 @@ test('writeConfig and readConfig', async t => {
 
 test('createUrl 1', t => {
     const options = {
-        grayscale: true,
-        random: true,
-        latest: false,
-        gravity: 'east'
+        random: true
     };
 
     const value = createUrl(Object.assign({}, DEFAULTS, options));
-    const expected = 'https://unsplash.it/g/2880/1800/?gravity=east&random';
+    const expected = 'https://source.unsplash.com/random';
 
     t.is(value, expected);
     t.end();
@@ -104,25 +99,120 @@ test('createUrl 1', t => {
 
 test('createUrl 2', t => {
     const options = {
-        grayscale: false,
-        random: false,
-        latest: true,
-        image: 150,
-        blur: true
+        user: 'erondu',
+        width: 1600,
+        height: 900
     };
 
     const value = createUrl(Object.assign({}, DEFAULTS, options));
-    const expected = 'https://unsplash.it/2880/1800/?image=150&blur';
+    const expected = 'https://source.unsplash.com/user/erondu/1600x900';
 
     t.is(value, expected);
     t.end();
 });
 
 test('createUrl 3', t => {
-    const options = {};
+    const options = {
+        likes: 'jackie',
+        width: 1600,
+        height: 900
+    };
 
     const value = createUrl(Object.assign({}, DEFAULTS, options));
-    const expected = 'https://unsplash.it/2880/1800/';
+    const expected = 'https://source.unsplash.com/user/jackie/likes/1600x900';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 4', t => {
+    const options = {
+        collection: '190727',
+        width: 1600,
+        height: 900
+    };
+
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://source.unsplash.com/collection/190727/1600x900';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 5', t => {
+    const options = {
+        daily: true
+    };
+
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://source.unsplash.com/daily';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 6', t => {
+    const options = {
+        category: 'nature',
+        weekly: true
+    };
+
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://source.unsplash.com/category/nature/weekly';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 7', t => {
+    const options = {
+        user: 'erondu',
+        daily: true
+    };
+
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://source.unsplash.com/user/erondu/daily';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 8', t => {
+    const options = {
+        weekly: true,
+        search: 'water'
+    };
+
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://source.unsplash.com/weekly/?water';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 9', t => {
+    const options = {
+        width: 1600,
+        height: 900,
+        search: 'nature,water'
+    };
+
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://source.unsplash.com/1600x900/?nature,water';
+
+    t.is(value, expected);
+    t.end();
+});
+
+test('createUrl 10', t => {
+    const options = {
+        photo: 'WLUHO9A_xik',
+        width: 1600,
+        height: 900
+    };
+
+    const value = createUrl(Object.assign({}, DEFAULTS, options));
+    const expected = 'https://source.unsplash.com/WLUHO9A_xik/1600x900';
 
     t.is(value, expected);
     t.end();
@@ -132,7 +222,7 @@ test('download', async t => {
     const options = {
         dir: __dirname
     };
-    const url = 'https://unsplash.it/2880/1800/';
+    const url = 'https://source.unsplash.com/random';
     const stateStack = [];
 
     const file = await download(options, url, state => stateStack.push(state));

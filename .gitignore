@@ -3,3 +3,4 @@ wallpaper-*.jpg
 node_modules
 .settings
 .DS_Store
+yarn.lock
