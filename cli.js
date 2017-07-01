@@ -1,87 +1,60 @@
 #! /usr/bin/env node
 
-const lib = require('./lib');
 const wallpaper = require('wallpaper');
+const minimist = require('minimist');
+const lib = require('./lib');
+const { boolOptions, minimistAliases, triggerDownload } = require('./lib/args');
+const { log, warn, inform, fail, success } = require('./lib/log');
 const help = require('./lib/help');
-const colors = require('./lib/colors');
-const figures = require('./lib/figures');
-const version = require('./package.json').version;
 const reporter = require('./lib/progress-reporter');
-const argv = require('minimist')(process.argv.slice(2), {
-    boolean: ['help', 'save-config', 'version'],
-    alias: {
-        w: 'width',
-        h: 'height',
-        d: 'dir',
-        s: 'save-config',
-        p: 'photo',
-        c: 'category',
-        u: 'user',
-        l: 'likes',
-        o: 'collection',
-        q: 'search',
-        v: 'version'
-    }
+const version = require('./package.json').version;
+
+const argv = minimist(process.argv.slice(2), {
+  boolean: boolOptions,
+  alias: minimistAliases
 });
 
 // --help
 if (argv.help) {
-    console.log(help);
+  log(help);
 }
 
 // --version
 if (argv.version) {
-    console.log('version', version);
+  log(`version ${version}`);
 }
 
-const options = lib.sanitizeArgs(argv);
-const shouldSave = options['save-config'];
-const shouldDownload = [
-    'photo',
-    'category',
-    'user',
-    'likes',
-    'collection',
-    'search',
-    'random',
-    'daily',
-    'weekly',
-    'featured'
-].some(option => options[option] !== undefined);
+const args = lib.sanitizeArgs(argv, warn);
+const shouldSave = args['save-config'];
+const shouldDownload = triggerDownload.some(trigger => args[trigger]);
 
 if (shouldSave || shouldDownload) {
-    const promise = lib.readConfig(options);
+  const promise = lib.readConfig(args);
 
-    if (shouldSave) {
-        promise.then(opts => lib.saveConfig(opts))
-            .catch(error => {
-                if (error && error.message) {
-                    console.log(colors.magenta(`${figures.cross} ${error.message}`));
-                }
-            });
-    }
+  if (shouldSave) {
+    promise
+      .then(opts => lib.saveConfig(opts))
+      .then(config => {
+        success(`Saved config as:`);
+        inform(config);
+      })
+      .catch(fail);
+  }
 
-    if (shouldDownload) {
-        promise.then(opts => {
-            const url = lib.createUrl(opts);
+  if (shouldDownload) {
+    promise.then(opts => {
+      const url = lib.createUrl(opts);
 
-            console.log(colors.yellow(`Request ${url}`));
+      inform(`Request ${url}`);
 
-            return lib.download(opts, url, reporter)
-                .then(filename => {
-                    console.log(colors.green(`${figures.tick} Image saved to ${filename}`));
-                    return wallpaper.set(filename);
-                })
-                .then(() => {
-                    console.log('Check it out.');
-                })
-                .catch(error => {
-                    if (error && error.message) {
-                        console.log(colors.red(`${figures.cross} ${error.message}`));
-                    }
-                });
-        });
-    }
-} else if (!argv.help && !argv.version) {
-    console.log(help);
+      return lib
+        .download(opts, url, reporter)
+        .then(filename => {
+          success(`Image saved to ${filename}`);
+          return wallpaper.set(filename);
+        })
+        .then(() => log('Check it out.'))
+        .catch(fail);
+    });
+  }
 }
