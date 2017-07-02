@@ -53,11 +53,15 @@ $ unsplash-wallpaper --help
 
     -w, --width {Number}
 
-        Set the width of desired download.
+        Set the width of desired image.
+        example:
+        $ unsplash-wallpaper --width 2880 --save-config
 
     -h, --height {Number}
 
-        Set the height of desired download.
+        Set the height of desired image.
+        example:
+        $ unsplash-wallpaper --width 2880 --height 1800 --save-config
 
     -d, --dir {String} or "."
 
@@ -82,6 +86,7 @@ $ unsplash-wallpaper --help
         Get a specific image by the photo ID.
         example:
         $ unsplash-wallpaper -p WLUHO9A_xik
+        $ unsplash-wallpaper --photo="-oWyJoSqBRM"
 
     -c, --category {CATEGORY NAME}
 
@@ -112,6 +117,7 @@ $ unsplash-wallpaper --help
         Get a photo from a search query.
         example:
         $ unsplash-wallpaper -q nature,water
+        $ unsplash-wallpaper -q="water falls"
 
     -v, --version
 
