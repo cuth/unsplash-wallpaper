@@ -54,7 +54,17 @@ if (shouldSave || shouldDownload) {
           return wallpaper.set(filename);
         })
         .then(() => log('Check it out.'))
-        .catch(fail);
+        .catch(err => {
+          fail(err);
+          if (args.collection && args.collection < 10000) {
+            inform('Curated collections are not yet supported.');
+          }
+          if (args.category) {
+            inform(
+              'Try one of these categories: nature, people, food, buildings, objects, or technology.'
+            );
+          }
+        });
     });
   }
 }
