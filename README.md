@@ -27,21 +27,21 @@ Usage
 ```
 $ unsplash-wallpaper --help
 
-  random
+  -r, --random 
     Get a random image.
-    $ unsplash-wallpaper random
+    $ unsplash-wallpaper --random
 
-  daily
+  -a, --daily 
     Get a fixed daily image.
-    $ unsplash-wallpaper daily --user erondu
+    $ unsplash-wallpaper --user erondu --daily
 
-  weekly
+  -e, --weekly 
     Get a fixed weekly image.
-    $ unsplash-wallpaper weekly --search water
+    $ unsplash-wallpaper --search water --weekly
 
-  featured
+  -f, --featured 
     Limit the results to the curated collections.
-    $ unsplash-wallpaper featured --search montreal
+    $ unsplash-wallpaper -f --search montreal
 
   -w, --width {Number}
     Set the width of desired image.
@@ -51,17 +51,17 @@ $ unsplash-wallpaper --help
     Set the height of desired image.
     $ unsplash-wallpaper --width 2880 --height 1800 --save-config
 
-  -d, --dir {String} or "."
+  -d, --dir {String}
     Download the image to a specific directory.
     "." uses the current working directory.
     "./" stores the current working directory even when it changes.
-    $ unsplash-wallpaper --dir "/Users/Shared"
-    $ unsplash-wallpaper --dir "C:UsersPublic"
+    $ unsplash-wallpaper --dir "/Users/Shared
+    $ unsplash-wallpaper --dir "C:UsersPublic
     $ unsplash-wallpaper -d .
 
-  -s, --save-config
+  -s, --save-config 
     Saves any width, height or dir value in a config file.
-    $ unsplash-wallpaper random -s --width 1600 --height 1200
+    $ unsplash-wallpaper -s --width 1600 --height 1200
     Leave the values blank to reset width and height:
     $ unsplash-wallpaper -whs
 
@@ -91,7 +91,9 @@ $ unsplash-wallpaper --help
     $ unsplash-wallpaper -q nature,water
     $ unsplash-wallpaper -q="water falls"
 
-  -v, --version
+  -v, --version 
+
+  --help 
 
 ```
 
