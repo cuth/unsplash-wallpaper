@@ -6,6 +6,7 @@ const lib = require('./lib');
 const { boolOptions, minimistAliases, triggerDownload } = require('./lib/args');
 const { log, warn, inform, fail, success } = require('./lib/log');
 const help = require('./lib/help');
+const { cyan } = require('./lib/colors');
 const reporter = require('./lib/progress-reporter');
 const version = require('./package.json').version;
 
@@ -17,11 +18,13 @@ const argv = minimist(process.argv.slice(2), {
 // --help
 if (argv.help) {
   log(help);
+  return;
 }
 
 // --version
 if (argv.version) {
   log(`version ${version}`);
+  return;
 }
 
 const args = lib.sanitizeArgs(argv, warn);
@@ -67,4 +70,13 @@ if (shouldSave || shouldDownload) {
         });
     });
   }
+} else {
+  log(`
+To learn the commands:
+  ${cyan('$ unsplash-wallpaper --help')}
+To save the image resolution:
+  ${cyan('$ unsplash-wallpaper --width 2880 --height 1800 -s')}
+To download and use a random image:
+  ${cyan('$ unsplash-wallpaper -r')}
+`);
 }
