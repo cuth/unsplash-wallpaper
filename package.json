@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:cuth/unsplash-wallpaper.git"
+    "url": "github:cuth/unsplash-wallpaper"
   },
   "keywords": [
     "wallpaper",
