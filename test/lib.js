@@ -232,3 +232,25 @@ test('download', async t => {
 
   return pify(fs.unlink)(file);
 });
+
+test('download not an image', async t => {
+  const options = {
+    dir: __dirname
+  };
+  const url = 'https://source.unsplash.com/'
+
+  return download(options, url).catch((err)=>{
+    t.is(err.message, 'The response was not an image.');
+  });
+})
+
+test('download error', async t => {
+  const options = {
+    dir: __dirname
+  };
+  const url = 'https://source.unsplash.com/WLUHO9A_xiki/1600x900'
+
+  return download(options, url).catch((err)=>{
+    t.is(err.message, 'The response is the image: we couldn\'t find that photo.');
+  });
+});
