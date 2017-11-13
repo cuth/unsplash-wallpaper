@@ -29,10 +29,18 @@
     "unsplash-wallpaper": "cli.js"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "precommit": "lint-staged",
+    "prettier:all": "prettier --single-quote --write \"{{lib,test}/*.js,*.js}\""
+  },
+  "lint-staged": {
+    "*.js": ["prettier --write --single-quote", "git add"]
   },
   "devDependencies": {
     "ava": "^0.2.0",
-    "path-exists": "^2.0.0"
+    "husky": "^0.14.3",
+    "lint-staged": "^5.0.0",
+    "path-exists": "^2.0.0",
+    "prettier": "^1.8.2"
   }
 }
