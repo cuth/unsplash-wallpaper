@@ -223,9 +223,8 @@ test('download', async t => {
     dir: __dirname
   };
   const url = 'https://source.unsplash.com/random';
-  const stateStack = [];
 
-  const file = await download(options, url, state => stateStack.push(state));
+  const file = await download(options, url);
   const doesExist = await exists(file);
 
   t.ok(doesExist);
@@ -237,20 +236,23 @@ test('download not an image', async t => {
   const options = {
     dir: __dirname
   };
-  const url = 'https://source.unsplash.com/'
+  const url = 'https://source.unsplash.com/';
 
-  return download(options, url).catch((err)=>{
+  return download(options, url).catch(err => {
     t.is(err.message, 'The response was not an image.');
   });
-})
+});
 
 test('download error', async t => {
   const options = {
     dir: __dirname
   };
-  const url = 'https://source.unsplash.com/WLUHO9A_xiki/1600x900'
+  const url = 'https://source.unsplash.com/WLUHO9A_xiki/1600x900';
 
-  return download(options, url).catch((err)=>{
-    t.is(err.message, 'The response is the image: we couldn\'t find that photo.');
+  return download(options, url).catch(err => {
+    t.is(
+      err.message,
+      "The response is the image: we couldn't find that photo."
+    );
   });
 });
