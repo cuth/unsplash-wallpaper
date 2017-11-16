@@ -7,14 +7,14 @@ unsplash-wallpaper
 
 This downloads an image from `source.unsplash.com` and assigns it as the background image for the active main screen.
 
-*Tested on Mac and Windows. (should work on Linux).*
+*Tested on Mac, Windows and Ubuntu. (should work on every Linux).*
 
 Install
 -------
 
 ```
 # NPM
-$ npm install --global unsplash-wallpaper
+$ npm i -g unsplash-wallpaper
 
 # Yarn
 $ yarn global add unsplash-wallpaper
