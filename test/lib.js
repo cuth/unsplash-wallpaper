@@ -218,17 +218,15 @@ test('createUrl 10', t => {
   t.end();
 });
 
-test('download unique filename', async t => {
+test('download expected filename', async t => {
   const options = {
     dir: __dirname
   };
   const url = 'https://source.unsplash.com/WLUHO9A_xik/1600x900';
-  const expectedFilename =
-    __dirname + '/' + 'wallpaper-uploads-141310026617203b5980d-c86b8baa.jpg';
-  const stateStack = [];
+  const expectedFilename = `${__dirname}/wallpaper-c86b8baa.jpg`;
 
-  const file = await download(options, url, state => stateStack.push(state));
-  t.is(expectedFilename, file);
+  const file = await download(options, url);
+  t.is(file, expectedFilename);
 
   return pify(fs.unlink)(file);
 });
