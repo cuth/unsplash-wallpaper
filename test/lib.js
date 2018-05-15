@@ -223,7 +223,7 @@ test('download expected filename', async t => {
     dir: __dirname
   };
   const url = 'https://source.unsplash.com/WLUHO9A_xik/1600x900';
-  const expectedFilename = `${__dirname}/wallpaper-c86b8baa.jpg`;
+  const expectedFilename = `${__dirname}${path.sep}wallpaper-c86b8baa.jpg`;
 
   const file = await download(options, url);
   t.is(file, expectedFilename);
