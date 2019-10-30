@@ -1,15 +1,16 @@
 {
   "name": "unsplash-wallpaper",
-  "version": "6.2.0",
+  "version": "7.0.0",
   "description": "Set an image from Unsplash as your wallpaper.",
   "main": "index.js",
   "dependencies": {
-    "log-update": "^1.0.2",
-    "minimist": "^1.1.1",
-    "pify": "^2.2.0",
-    "request": "^2.61.0",
-    "request-progress": "^0.3.1",
-    "wallpaper": "^2.0.0"
+    "conf": "^6.1.0",
+    "log-update": "^3.3.0",
+    "minimist": "^1.2.0",
+    "pify": "^4.0.1",
+    "request": "^2.88.0",
+    "request-progress": "^3.0.0",
+    "wallpaper": "^4.4.1"
   },
   "repository": {
     "type": "git",
@@ -34,13 +35,16 @@
     "prettier:all": "prettier --single-quote --write \"{{lib,test}/*.js,*.js}\""
   },
   "lint-staged": {
-    "*.js": ["prettier --write --single-quote", "git add"]
+    "*.js": [
+      "prettier --write --single-quote",
+      "git add"
+    ]
   },
   "devDependencies": {
-    "ava": "^0.2.0",
-    "husky": "^0.14.3",
-    "lint-staged": "^5.0.0",
-    "path-exists": "^2.0.0",
-    "prettier": "^1.8.2"
+    "ava": "^2.4.0",
+    "husky": "^3.0.9",
+    "lint-staged": "^9.4.2",
+    "path-exists": "^4.0.0",
+    "prettier": "^1.18.2"
   }
 }

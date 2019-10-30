@@ -12,29 +12,32 @@ import {
   download
 } from '../lib';
 import { resolveDir } from '../lib/args';
-import * as DEFAULTS from '../lib/defaults';
+import schema from '../lib/schema';
+
+const DEFAULTS = Object.entries(schema.options.properties).reduce(
+  (acc, [key, value]) =>
+    value.default ? { ...acc, [key]: value.default } : acc,
+  {}
+);
 
 test('resolveDir 1', t => {
   const dir = './path/to/directory';
   const resolved = path.join(process.cwd(), dir);
 
-  t.same(resolveDir(dir), resolved);
-  t.end();
+  t.deepEqual(resolveDir(dir), resolved);
 });
 
 test('resolveDir 2', t => {
   const dir = '.';
 
-  t.same(resolveDir(dir), dir);
-  t.end();
+  t.deepEqual(resolveDir(dir), dir);
 });
 
 test('resolveDir 3', t => {
   const dir = '~/path/to/directory';
   const resolved = path.join(os.homedir(), '/path/to/directory');
 
-  t.same(resolveDir(dir), resolved);
-  t.end();
+  t.deepEqual(resolveDir(dir), resolved);
 });
 
 test('sanitizeArgs 1', t => {
@@ -47,8 +50,7 @@ test('sanitizeArgs 1', t => {
     dir: path.join(process.cwd(), '/')
   };
 
-  t.same(sanitizeArgs(args, () => {}), sanitized);
-  t.end();
+  t.deepEqual(sanitizeArgs(args, () => {}), sanitized);
 });
 
 test('sanitizeArgs 2', t => {
@@ -63,8 +65,7 @@ test('sanitizeArgs 2', t => {
     width: 500
   };
 
-  t.same(sanitizeArgs(args, () => {}), sanitized);
-  t.end();
+  t.deepEqual(sanitizeArgs(args, () => {}), sanitized);
 });
 
 test('writeConfig and readConfig', async t => {
@@ -80,7 +81,7 @@ test('writeConfig and readConfig', async t => {
 
   const options = await readConfig({});
 
-  t.same(settings, options);
+  t.deepEqual(settings, options);
 
   return saveConfig(revert);
 });
@@ -94,7 +95,6 @@ test('createUrl 1', t => {
   const expected = 'https://source.unsplash.com/random';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 2', t => {
@@ -108,7 +108,6 @@ test('createUrl 2', t => {
   const expected = 'https://source.unsplash.com/user/erondu/1600x900';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 3', t => {
@@ -122,7 +121,6 @@ test('createUrl 3', t => {
   const expected = 'https://source.unsplash.com/user/jackie/likes/1600x900';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 4', t => {
@@ -136,7 +134,6 @@ test('createUrl 4', t => {
   const expected = 'https://source.unsplash.com/collection/190727/1600x900';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 5', t => {
@@ -148,7 +145,6 @@ test('createUrl 5', t => {
   const expected = 'https://source.unsplash.com/daily';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 6', t => {
@@ -161,7 +157,6 @@ test('createUrl 6', t => {
   const expected = 'https://source.unsplash.com/category/nature/weekly';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 7', t => {
@@ -174,7 +169,6 @@ test('createUrl 7', t => {
   const expected = 'https://source.unsplash.com/user/erondu/daily';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 8', t => {
@@ -187,7 +181,6 @@ test('createUrl 8', t => {
   const expected = 'https://source.unsplash.com/weekly/?water';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 9', t => {
@@ -201,7 +194,6 @@ test('createUrl 9', t => {
   const expected = 'https://source.unsplash.com/1600x900/?nature,water';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('createUrl 10', t => {
@@ -215,7 +207,6 @@ test('createUrl 10', t => {
   const expected = 'https://source.unsplash.com/WLUHO9A_xik/1600x900';
 
   t.is(value, expected);
-  t.end();
 });
 
 test('download expected filename', async t => {
@@ -240,7 +231,7 @@ test('download', async t => {
   const file = await download(options, url);
   const doesExist = await exists(file);
 
-  t.ok(doesExist);
+  t.true(doesExist);
 
   return pify(fs.unlink)(file);
 });
@@ -253,19 +244,5 @@ test('download not an image', async t => {
 
   return download(options, url).catch(err => {
     t.is(err.message, 'The response was not an image.');
-  });
-});
-
-test('download error', async t => {
-  const options = {
-    dir: __dirname
-  };
-  const url = 'https://source.unsplash.com/WLUHO9A_xiki/1600x900';
-
-  return download(options, url).catch(err => {
-    t.is(
-      err.message,
-      "The response is the image: we couldn't find that photo."
-    );
   });
 });
